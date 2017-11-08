@@ -5,6 +5,7 @@ import java.util.Random;
 public class DNA {
 
     private Move[] moveSet = new Move[40];
+    private Position finalPosition;
 
     private int fitnessScore = Integer.MIN_VALUE;
 
@@ -19,8 +20,7 @@ public class DNA {
     }
 
     private void runDNA() throws CloneNotSupportedException {
-        Position finalPosition = walkToTheTarget();
-        calculateFitness(finalPosition);
+        calculateFitness();
     }
 
     private void generateNewDNA() {
@@ -59,39 +59,110 @@ public class DNA {
         for (Move move: moveSet) {
             switch (move) {
                 case RIGHT:
-                    if (currentDNAPosition.canMoveRight()) currentDNAPosition.moveRight();
+                    if (currentDNAPosition.canMoveRight()) {
+                        currentDNAPosition.moveRight();
+                        fitnessScore = increaseFitness(fitnessScore);
+                    } else {
+                        fitnessScore = decreaseFitness(fitnessScore);
+                    }
                     break;
                 case DOWN:
-                    if (currentDNAPosition.canMoveDown()) currentDNAPosition.moveDown();
+                    if (currentDNAPosition.canMoveDown()) {
+                        currentDNAPosition.moveDown();
+                        fitnessScore = increaseFitness(fitnessScore);
+                    } else {
+                        fitnessScore = decreaseFitness(fitnessScore);
+                    }
                     break;
                 case UP:
-                    if (currentDNAPosition.canMoveUp()) currentDNAPosition.moveUp();
+                    if (currentDNAPosition.canMoveUp()) {
+                        currentDNAPosition.moveUp();
+                        fitnessScore = increaseFitness(fitnessScore);
+                    } else {
+                        fitnessScore = decreaseFitness(fitnessScore);
+                    }
                     break;
                 case LEFT:
-                    if (currentDNAPosition.canMoveLeft()) currentDNAPosition.moveLeft();
+                    if (currentDNAPosition.canMoveLeft()) {
+                        currentDNAPosition.moveLeft();
+                        fitnessScore = increaseFitness(fitnessScore);
+                    } else {
+                        fitnessScore = decreaseFitness(fitnessScore);
+                    }
                     break;
                 default:
                     throw new IllegalArgumentException("Can't move in any direction");
             }
         }
+        finalPosition = currentDNAPosition;
         return currentDNAPosition;
     }
 
-    private void calculateFitness(Position finalPosition) throws CloneNotSupportedException {
+    private void calculateFitness() throws CloneNotSupportedException {
+        walkToTheTarget();
         int resultAchievedScore =
                 (finalPosition.getColumn() == Labirynth.ENDING_POSITION.getColumn()
-                &&
-                        finalPosition.getRow() == Labirynth.ENDING_POSITION.getRow())
+                        && finalPosition.getRow() == Labirynth.ENDING_POSITION.getRow())
                         ? 200 :
                         (finalPosition.getColumn() + finalPosition.getRow());
-        int leftStepsScore = finalPosition.getLeftSteps();
-        int howCloseToEndScore =
-                (finalPosition.getColumn() +
-                finalPosition.getRow() -
-                        Labirynth.ENDING_POSITION.getRow() -
-                        Labirynth.ENDING_POSITION.getColumn()) * 2;
+        int leftStepsScore = finalPosition.getLeftSteps() / 2;
+        int howCloseToEndScore = (finalPosition.getColumn() + finalPosition.getRow()
+                - Labirynth.ENDING_POSITION.getRow() - Labirynth.ENDING_POSITION.getColumn());
 
-        this.fitnessScore = resultAchievedScore + leftStepsScore + howCloseToEndScore;
+        this.fitnessScore = resultAchievedScore + leftStepsScore + howCloseToEndScore + calculateFitnessSupport();
+    }
+
+    private int calculateFitnessSupport() throws CloneNotSupportedException {
+        int fitnessScore = 1;
+        Position currentDNAPosition = new Position();
+        for (Move move : moveSet) {
+            if (currentDNAPosition.getColumn() == 11 && currentDNAPosition.getRow() == 11) return 200;
+            switch (move) {
+                case RIGHT:
+                    if (currentDNAPosition.canMoveRight()) {
+                        currentDNAPosition.moveRight();
+                        fitnessScore = increaseFitness(fitnessScore);
+                    } else {
+                        fitnessScore = decreaseFitness(fitnessScore);
+                    }
+                    break;
+                case DOWN:
+                    if (currentDNAPosition.canMoveDown()) {
+                        currentDNAPosition.moveDown();
+                        fitnessScore = increaseFitness(fitnessScore);
+                    } else {
+                        fitnessScore = decreaseFitness(fitnessScore);
+                    }
+                    break;
+                case UP:
+                    if (currentDNAPosition.canMoveUp()) {
+                        currentDNAPosition.moveUp();
+                        fitnessScore = increaseFitness(fitnessScore);
+                    } else {
+                        fitnessScore = decreaseFitness(fitnessScore);
+                    }
+                    break;
+                case LEFT:
+                    if (currentDNAPosition.canMoveLeft()) {
+                        currentDNAPosition.moveLeft();
+                        fitnessScore = increaseFitness(fitnessScore);
+                    } else {
+                        fitnessScore = decreaseFitness(fitnessScore);
+                    }
+                    break;
+                default:
+                    throw new IllegalArgumentException("Can't move in any direction");
+            }
+        }
+        return fitnessScore;
+    }
+
+    private int decreaseFitness(int score) {
+        return score - 1;
+    }
+
+    private int increaseFitness(int score) {
+        return score + 1;
     }
 
     public int getFitnessScore() {
@@ -104,6 +175,10 @@ public class DNA {
 
     public void setMoveSet(Move[] moveSet) {
         this.moveSet = moveSet;
+    }
+
+    public Position getFinalPosition() {
+        return finalPosition;
     }
 
     /**
@@ -122,8 +197,7 @@ public class DNA {
                 childMoveSet[i] = partnerB.moveSet[i];
             }
         }
-        DNA childDNA = new DNA(childMoveSet);
-        return childDNA;
+        return new DNA(childMoveSet);
     }
 
     public void becomeXMan(double mutationRate) {

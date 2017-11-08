@@ -1,8 +1,8 @@
 package com.pkawa.mazegenalg;
 
 public class Position {
-    private int column;
-    private int row;
+    private int column = 1;
+    private int row = 1;
 
     private int leftSteps = 40;
 
@@ -13,7 +13,7 @@ public class Position {
     }
 
     boolean canMoveDown() throws CloneNotSupportedException {
-        Position pos = this.clone();
+        Position pos = new Position(this.column, this.row);
         pos.moveDown();
         return Labirynth.CanGoToThatPosition(pos);
     }
@@ -31,8 +31,6 @@ public class Position {
     }
 
     public Position() {
-        column = 1;
-        row = 1;
     }
 
     public Position(int column, int row) {
@@ -61,7 +59,16 @@ public class Position {
     }
 
     @Override
-    public Position clone() {
+    public String toString() {
+        return "Position{" +
+                "column=" + column +
+                ", row=" + row +
+                ", leftSteps=" + leftSteps +
+                '}';
+    }
+
+    @Override
+    public Position clone() throws CloneNotSupportedException {
         return new Position(this.column, this.row);
     }
 
@@ -69,24 +76,12 @@ public class Position {
         return column;
     }
 
-    public void setColumn(int column) {
-        this.column = column;
-    }
-
     public int getRow() {
         return row;
     }
 
-    public void setRow(int row) {
-        this.row = row;
-    }
-
     public int getLeftSteps() {
         return leftSteps;
-    }
-
-    public void setLeftSteps(int leftSteps) {
-        this.leftSteps = leftSteps;
     }
 
 }

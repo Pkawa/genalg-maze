@@ -2,7 +2,7 @@ package com.pkawa.mazegenalg;
 
 public class Labirynth {
     public static final Position STARTING_POSITION = new Position(1, 1);
-    public static final Position ENDING_POSITION = new Position(11, 11);
+    public static final Position ENDING_POSITION = new Position(10, 10);
     private static final String CAN_PASS_SIGN = "◼";
     private static final String CANNOT_PASS_SIGN = "◻";
 
@@ -26,7 +26,7 @@ public class Labirynth {
     }
 
     public static boolean CanGoToThatPosition(Position position) {
-        return movableMap[position.getColumn()][position.getRow()];
+        return movableMap[position.getRow()][position.getColumn()];
     }
 
     public static String[][] drawMap() {
@@ -43,14 +43,13 @@ public class Labirynth {
         return drawnMap;
     }
 
-    public static String[][] printMap(String[][] drawnMap) {
+    public static void printMap(String[][] drawnMap) {
         for (int i = 0; i < drawnMap.length; i++) {
             for (int j = 0; j < drawnMap.length; j++) {
                 System.out.print(drawnMap[i][j]);
             }
             System.out.println();
         }
-        return drawnMap;
     }
 
     public static void printMap() {
