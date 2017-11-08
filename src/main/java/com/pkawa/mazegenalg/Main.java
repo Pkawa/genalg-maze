@@ -3,35 +3,25 @@ package com.pkawa.mazegenalg;
 import java.util.Arrays;
 
 public class Main {
-    public static Population bestResultEver;
-    public static int bestResultEverGenerationNumber;
-
     public static void main(String[] args) {
         Labirynth.printMap();
-        runGeneticAlgorithm(300, 0.03, 1000);
+        runGeneticAlgorithm(2000, 0.01, 1000);
 
     }
 
     public static void runGeneticAlgorithm(int numberOfIterations, double mutationRate, int maxPopulation) {
         try {
             Population population = new Population(mutationRate, maxPopulation);
-            bestResultEver = population;
 
             for (int i = 0; i < numberOfIterations; i++) {
                 try {
                     population.naturalSelection();
                     printData(population, i);
-                    if (population.getBestResult().getFitnessScore() > bestResultEver.getBestResult().getFitnessScore()) {
-                        bestResultEver = population;
-                        bestResultEverGenerationNumber = i;
-                    }
                     population = population.generateNewPopulation();
                 } catch (CloneNotSupportedException e) {
                     e.printStackTrace();
                 }
             }
-            System.out.println("\n\nBEST RESULT EVER");
-            printData(bestResultEver, bestResultEverGenerationNumber);
         } catch (CloneNotSupportedException cnse) {
             cnse.printStackTrace();
         }

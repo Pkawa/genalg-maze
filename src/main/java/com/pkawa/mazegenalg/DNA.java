@@ -107,7 +107,7 @@ public class DNA {
                         (finalPosition.getColumn() + finalPosition.getRow());
         int leftStepsScore = finalPosition.getLeftSteps() / 2;
         int howCloseToEndScore = (finalPosition.getColumn() + finalPosition.getRow()
-                - Labirynth.ENDING_POSITION.getRow() - Labirynth.ENDING_POSITION.getColumn());
+                - Labirynth.ENDING_POSITION.getRow() - Labirynth.ENDING_POSITION.getColumn()) / 2;
 
         this.fitnessScore = resultAchievedScore + leftStepsScore + howCloseToEndScore + calculateFitnessSupport();
     }
